@@ -5,13 +5,12 @@
 
 library(jagsUI)
 library(tidyverse)
-
-load(file = "reproductive_senescence_polar_bear_variable_environment/data/CRlocalbears_revision2MEE.Rdata")
-load(file = "reproductive_senescence_polar_bear_variable_environment/data/agefactlocalbears_revision2MEE.Rdata")
-load(file = "reproductive_senescence_polar_bear_variable_environment/data/agereallocalbears_revision2MEE.Rdata")
-load(file = "reproductive_senescence_polar_bear_variable_environment/data/dataweaning_revision2MEE.Rdata")
-load(file = "reproductive_senescence_polar_bear_variable_environment/data/daylocalbears_revision2MEE.Rdata")
-load(file = "reproductive_senescence_polar_bear_variable_environment/data/initstatelocalbears_revision2MEE.Rdata")
+load(file = "data/CRlocalbears_revision2MEE.Rdata")
+load(file = "data/agefactlocalbears_revision2MEE.Rdata")
+load(file = "data/agereallocalbears_revision2MEE.Rdata")
+load(file = "data/dataweaning_revision2MEE.Rdata")
+load(file = "data/daylocalbears_revision2MEE.Rdata")
+load(file = "data/initstatelocalbears_revision2MEE.Rdata")
 
 CRfamily <- CRlb # Matrix of capture histories
 daycapt <- daylb # Matrix of days of capture 
@@ -87,4 +86,4 @@ fit_CR_model <- jags(data = my_data,
                      n.chains = 2, n.iter = 20000, n.burnin = 9000, n.thin = 5,
                      parallel = TRUE) 
 
-save(fit_CR_model, file = "reproductive_senescence_polar_bear_variable_environment/data/fit_CR_model_age_except_beta_gamma.RData")
+save(fit_CR_model, file = "data/fit_CR_model_age_except_beta_gamma.RData")

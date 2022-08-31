@@ -3,7 +3,7 @@
 library(tidyverse)
 library(nimble)
 library(patchwork)
-source("reproductive_senescence_polar_bear_variable_environment/code/functions.R")
+source("code/functions.R")
 
 # ~ 1. Figure 1: Map -----------------------------------------------------------
 
@@ -40,7 +40,7 @@ model_full_df <- data.frame(name = c("beta[1]", "beta[2]", "beta[3]", "beta[4]",
                                               ifelse(age == "\u2265 21 yr", paste0(covariate, "_ob"), 
                                                      ifelse(age == "\u2265 16 yr", paste0(covariate, "_o"), NA))))))
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up.RData")
+load("data/fit_break_up.RData")
 numVars_1 <- 32 ; numVars_2 <- 24
 N <- dim(fit_break_up$samples$chain1)[1]
 C <- dim(fit_break_up$samples$chain1)[2]
@@ -105,7 +105,7 @@ model_best_df <- data.frame(name = c("beta[1]", "beta[2]", "beta[3]", "beta[4]",
                                               ifelse(age == "\u2265 21 yr", paste0(covariate, "_ob"), 
                                                      ifelse(age == "\u2265 16 yr", paste0(covariate, "_o"), NA))))))
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up_final.RData")
+load("data/fit_break_up_final.RData")
 numVars_1 <- 13 ; numVars_2 <- 6
 N <- dim(fit_break_up_final$samples$chain1)[1]
 C <- dim(fit_break_up_final$samples$chain1)[2]
@@ -226,7 +226,7 @@ caterpillar_plot_1 + caterpillar_plot_2 +
 
 
 # ~ 3. Figure 3: Boxplot absolute prob -----------------------------------------
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up_final.RData")
+load("data/fit_break_up_final.RData")
 numVars_1 <- 13 ; numVars_2 <- 6
 N <- dim(fit_break_up_final$samples$chain1)[1]
 C <- dim(fit_break_up_final$samples$chain1)[2]
@@ -290,7 +290,7 @@ ggplot(data = df_plot) +
 
 # ~ 4. Figure 4: Effect of date of capture -------------------------------------
 
-df_plot <- read_csv("reproductive_senescence_polar_bear_variable_environment/data/effect_DateCapture.csv", show_col_types = FALSE)  %>%
+df_plot <- read_csv("data/effect_DateCapture.csv", show_col_types = FALSE)  %>%
   mutate(age = factor(age, levels = c("5-9 yr", "10-15 yr", "16-20 yr", "\u2265 21 yr")),
          event = factor(event, levels = c("no litter", "1 cub", "2-3 cubs")),
          event_2 = factor(ifelse(event == "no litter", "no litter", 
@@ -346,7 +346,7 @@ model_full_df <- data.frame(name = c("beta[1]", "beta[2]", "beta[3]", "beta[4]",
                                               ifelse(age == "\u2265 21 yr", paste0(covariate, "_ob"), 
                                                      ifelse(age == "\u2265 16 yr", paste0(covariate, "_o"), NA))))))
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up.RData")
+load("data/fit_break_up.RData")
 numVars_1 <- 32 ; numVars_2 <- 24
 N <- dim(fit_break_up$samples$chain1)[1]
 C <- dim(fit_break_up$samples$chain1)[2]
@@ -436,7 +436,7 @@ effect_size_breeding + effect_size_litter_size +
 
 # ~ 6. Figure 6: Effect of sea-ice --------------------------------------------
 
-df_plot_day_break_up <- read_csv("reproductive_senescence_polar_bear_variable_environment/data/effect_DateBreakUp.csv")  %>%
+df_plot_day_break_up <- read_csv("data/effect_DateBreakUp.csv")  %>%
   mutate(age = factor(age, levels = c("5-9 yr", "10-15 yr", "16-20 yr", "\u2265 21 yr")),
          event = factor(event, levels = c("no litter", "1 cub", "2-3 cubs")),
          event_2 = factor(ifelse(event == "no litter", "no litter", 
@@ -458,7 +458,7 @@ ggplot(data = df_plot_day_break_up) +
 
 # ~ 7. Figure 7: Effect of AO -------------------------------------------------
 
-df_plot_w_AO <- read_csv("reproductive_senescence_polar_bear_variable_environment/data/effect_WinterAO.csv")  %>%
+df_plot_w_AO <- read_csv("data/effect_WinterAO.csv")  %>%
   mutate(age = factor(age, levels = c("5-9 yr", "10-15 yr", "16-20 yr", "\u2265 21 yr")),
          event = factor(event, levels = c("no litter", "1 cub", "2-3 cubs")),
          event_2 = factor(ifelse(event == "no litter", "no litter", 
@@ -476,7 +476,7 @@ plot_w_AO_shading <- ggplot(data = df_plot_w_AO) +
        y = "probability") +
   facet_wrap(event_2~.)
 
-df_plot_w_AO_t_1 <- read_csv("reproductive_senescence_polar_bear_variable_environment/data/effect_PriorWinterAO.csv")  %>%
+df_plot_w_AO_t_1 <- read_csv("data/effect_PriorWinterAO.csv")  %>%
   mutate(age = factor(age, levels = c("5-9 yr", "10-15 yr", "16-20 yr", "\u2265 21 yr")),
          event = factor(event, levels = c("no litter", "1 cub", "2-3 cubs")),
          event_2 = factor(ifelse(event == "no litter", "no litter", 
@@ -497,7 +497,7 @@ plot_w_AO_t_1_shading <- ggplot(data = df_plot_w_AO_t_1) +
 ggsave("10_Meetings/figures meeting/effect_winter_AO_t-1.png", height = 8, width = 18, units = "cm")
 
 
-df_plot_s_AO_t_1 <- read_csv("reproductive_senescence_polar_bear_variable_environment/data/effect_PriorSpringAO.csv")  %>%
+df_plot_s_AO_t_1 <- read_csv("data/effect_PriorSpringAO.csv")  %>%
   mutate(age = factor(age, levels = c("5-9 yr", "10-15 yr", "16-20 yr", "\u2265 21 yr")),
          event = factor(event, levels = c("no litter", "1 cub", "2-3 cubs")),
          event_2 = factor(ifelse(event == "no litter", "no litter", 

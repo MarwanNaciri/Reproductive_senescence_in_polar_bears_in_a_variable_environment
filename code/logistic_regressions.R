@@ -10,21 +10,21 @@ library(patchwork)
 library(cowplot)
 
 #' Load the data 
-source("reproductive_senescence_polar_bear_variable_environment/code/functions.R")
+source("code/functions.R")
 
 # Environmental data ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-sea_ice_data <- read_csv("reproductive_senescence_polar_bear_variable_environment/data/sea_ice_data.csv")
+sea_ice_data <- read_csv("data/sea_ice_data.csv")
 
 sea_ice_data <- rbind(sea_ice_data, c(2022, rep(NA, times = ncol(sea_ice_data)-1))) # Add row for year 2022
 sea_ice_data <- data.frame(sea_ice_data,    
                            DateBreakUp_t_1 = c(NA, sea_ice_data$DateBreakUp[-nrow(sea_ice_data)]),    # Re-index, to get the date of break-up in year t-1
                            DateFreezeUp_t_1 = c(NA, sea_ice_data$DateFreezeUp[-nrow(sea_ice_data)]))    # Same for the date of freeze-up
 
-AO_data <- read_csv("reproductive_senescence_polar_bear_variable_environment/data/AO_data.csv")
+AO_data <- read_csv("data/AO_data.csv")
 
 
 # Data for the regression of the probability of litter production ~~~~~~~~~~~~~~
-CR_data_1 <- CR_f_lone_or_with_coys <- read_csv("reproductive_senescence_polar_bear_variable_environment/data/CR_f_lone_or_with_coys.csv") %>% # Relevant capture data for all the females that were alone at capture or with cubs-of-the-year
+CR_data_1 <- CR_f_lone_or_with_coys <- read_csv("data/CR_f_lone_or_with_coys.csv") %>% # Relevant capture data for all the females that were alone at capture or with cubs-of-the-year
   filter(year >= 2000) # Keep only captures from 2000 onward due to changes in the relative capture probability of lone females vs females with cubs-of-the-year between 1992-1999 and 2000-2022
 
 CR_data_1 %>%
@@ -36,7 +36,7 @@ CR_data_1 %>%
 
 
 # Data for the regression of the probability of a large litter (given a litter) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-CR_data_2 <- read_csv("reproductive_senescence_polar_bear_variable_environment/data/CR_f_with_coys.csv") %>% # Relevant capture data for all the females that were with cubs-of-the-year at capture
+CR_data_2 <- read_csv("data/CR_f_with_coys.csv") %>% # Relevant capture data for all the females that were with cubs-of-the-year at capture
   filter(lon < 40) # Remove one female that was captured outside of the study area
 
 CR_data_2 %>%
@@ -50,9 +50,9 @@ CR_data_2 %>%
 #' 
 #' Now let's combine both datasets (i.e. females with cubs of the year captured between 1992 and 2022, and lone females captured between 200), so that when we scale the covariates, they are scaled over the same values.
 #' 
-CR_data_f_w_cubs <- read_csv("reproductive_senescence_polar_bear_variable_environment/data/CR_f_with_coys.csv") %>%
+CR_data_f_w_cubs <- read_csv("data/CR_f_with_coys.csv") %>%
   filter(lon < 40)
-CR_data_lone_fem <- read_csv("reproductive_senescence_polar_bear_variable_environment/data/CR_f_lone_or_with_coys.csv") %>%
+CR_data_lone_fem <- read_csv("data/CR_f_lone_or_with_coys.csv") %>%
   filter(year >= 2000,
          cub_status == "n")
 CR_data <- rbind(CR_data_f_w_cubs, CR_data_lone_fem)
@@ -314,12 +314,12 @@ fit_break_up <-  nimbleMCMC(code = model_break_up,
                                  WAIC = TRUE)
 
 save(fit_break_up,
-     file = "reproductive_senescence_polar_bear_variable_environment/data/fit_break_up.RData")
+     file = "data/fit_break_up.RData")
 
 #' 
 #' Let's visually inspect the MCMC
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up.RData")
+load("data/fit_break_up.RData")
 
 numVars_1 <- 32 ; numVars_2 <- 24
 N <- dim(fit_break_up$samples$chain1)[1]
@@ -397,7 +397,7 @@ model_full_df <- data.frame(name = c("beta[1]", "beta[2]", "beta[3]", "beta[4]",
                                               ifelse(age == "\u2265 21 yr", paste0(covariate, "_ob"), 
                                                      ifelse(age == "\u2265 16 yr", paste0(covariate, "_o"), NA))))))
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up.RData")
+load("data/fit_break_up.RData")
 numVars_1 <- 32 ; numVars_2 <- 24
 N <- dim(fit_break_up$samples$chain1)[1]
 C <- dim(fit_break_up$samples$chain1)[2]
@@ -773,13 +773,13 @@ fit_break_up_final <-  nimbleMCMC(code = model_break_up_final,
                                                              WAIC = TRUE)
 
 save(fit_break_up_final,
-     file = "reproductive_senescence_polar_bear_variable_environment/data/fit_break_up_final.RData")
+     file = "data/fit_break_up_final.RData")
 
 #' 
 #' Let's visually inspect the MCMC 
 #' 
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up_final.RData")
+load("data/fit_break_up_final.RData")
 
 numVars_1 <- 13 ; numVars_2 <- 6
 N <- dim(fit_break_up_final$samples$chain1)[1]
@@ -819,7 +819,7 @@ sum(Rhats$summary.Rhat <1.1) - nrow(Rhats) # If this returns 0, then convergence
 #' 
 #' ### Effect of *DateCapture*
 #' 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up_final.RData")
+load("data/fit_break_up_final.RData")
 numVars_1 <- 13 ; numVars_2 <- 6
 N <- dim(fit_break_up_final$samples$chain1)[1]
 C <- dim(fit_break_up_final$samples$chain1)[2]
@@ -936,13 +936,13 @@ df_plot <- rbind(data.frame(var =  rep(grid, times = 4),
   mutate(age = factor(age, levels = c("5-9 yr", "10-15 yr", "16-20 yr", "\u2265 21 yr")),
          event = factor(event, levels = c("no litter", "1 cub", "2-3 cubs")))
 
-write_csv(df_plot, "reproductive_senescence_polar_bear_variable_environment/data/effect_DateCapture.csv")
+write_csv(df_plot, "data/effect_DateCapture.csv")
 
 #' 
 #' ### Effect of *Size*
 #' 
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up_final.RData")
+load("data/fit_break_up_final.RData")
 numVars_1 <- 13 ; numVars_2 <- 6
 N <- dim(fit_break_up_final$samples$chain1)[1]
 C <- dim(fit_break_up_final$samples$chain1)[2]
@@ -1057,13 +1057,13 @@ df_plot <- rbind(data.frame(var =  rep(grid, times = 4),
   mutate(age = factor(age, levels = c("5-9 yr", "10-15 yr", "16-20 yr", "\u2265 21 yr")),
          event = factor(event, levels = c("no litter", "1 cub", "2-3 cubs")))
 
-write_csv(df_plot, "reproductive_senescence_polar_bear_variable_environment/data/effect_Size.csv")
+write_csv(df_plot, "data/effect_Size.csv")
 
 #' 
 #' ### Effect of *DateBreakUp*
 #' 
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up_final.RData")
+load("data/fit_break_up_final.RData")
 numVars_1 <- 13 ; numVars_2 <- 6
 N <- dim(fit_break_up_final$samples$chain1)[1]
 C <- dim(fit_break_up_final$samples$chain1)[2]
@@ -1175,13 +1175,13 @@ df_plot <- rbind(data.frame(var =  rep(grid, times = 4),
   mutate(age = factor(age, levels = c("5-9 yr", "10-15 yr", "16-20 yr", "\u2265 21 yr")),
          event = factor(event, levels = c("no litter", "1 cub", "2-3 cubs")))
 
-write_csv(df_plot, "reproductive_senescence_polar_bear_variable_environment/data/effect_DateBreakUp.csv")
+write_csv(df_plot, "data/effect_DateBreakUp.csv")
 
 #' 
 #' ### Effect of *WinterAO*
 #' 
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up_final.RData")
+load("data/fit_break_up_final.RData")
 numVars_1 <- 13 ; numVars_2 <- 6
 N <- dim(fit_break_up_final$samples$chain1)[1]
 C <- dim(fit_break_up_final$samples$chain1)[2]
@@ -1293,7 +1293,7 @@ df_plot <- rbind(data.frame(var =  rep(grid, times = 4),
   mutate(age = factor(age, levels = c("5-9 yr", "10-15 yr", "16-20 yr", "\u2265 21 yr")),
          event = factor(event, levels = c("no litter", "1 cub", "2-3 cubs")))
 
-write_csv(df_plot, "reproductive_senescence_polar_bear_variable_environment/data/effect_WinterAO.csv")
+write_csv(df_plot, "data/effect_WinterAO.csv")
 
 
 #' 
@@ -1301,7 +1301,7 @@ write_csv(df_plot, "reproductive_senescence_polar_bear_variable_environment/data
 #' ### Effect of *PriorWinterAO*
 #' 
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up_final.RData")
+load("data/fit_break_up_final.RData")
 numVars_1 <- 13 ; numVars_2 <- 6
 N <- dim(fit_break_up_final$samples$chain1)[1]
 C <- dim(fit_break_up_final$samples$chain1)[2]
@@ -1413,13 +1413,13 @@ df_plot <- rbind(data.frame(var =  rep(grid, times = 4),
   mutate(age = factor(age, levels = c("5-9 yr", "10-15 yr", "16-20 yr", "\u2265 21 yr")),
          event = factor(event, levels = c("no litter", "1 cub", "2-3 cubs")))
 
-write_csv(df_plot, "reproductive_senescence_polar_bear_variable_environment/data/effect_PriorWinterAO.csv")
+write_csv(df_plot, "data/effect_PriorWinterAO.csv")
 
 #' 
 #' ### Effect of *PriorSpringAO*
 #' 
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_break_up_final.RData")
+load("data/fit_break_up_final.RData")
 numVars_1 <- 13 ; numVars_2 <- 6
 N <- dim(fit_break_up_final$samples$chain1)[1]
 C <- dim(fit_break_up_final$samples$chain1)[2]
@@ -1532,7 +1532,7 @@ df_plot <- rbind(data.frame(var =  rep(grid, times = 4),
   mutate(age = factor(age, levels = c("5-9 yr", "10-15 yr", "16-20 yr", "\u2265 21 yr")),
          event = factor(event, levels = c("no litter", "1 cub", "2-3 cubs")))
 
-write_csv(df_plot, "reproductive_senescence_polar_bear_variable_environment/data/effect_PriorSpringAO.csv")
+write_csv(df_plot, "data/effect_PriorSpringAO.csv")
 
 #' 
 #' 
@@ -1772,7 +1772,7 @@ fit_freeze_up <-  nimbleMCMC(code = model_freeze_up,
                                  WAIC = TRUE)
 
 save(fit_freeze_up,
-     file = "reproductive_senescence_polar_bear_variable_environment/data/fit_freeze_up_final")
+     file = "data/fit_freeze_up_final")
 
 #' 
 #' Let's visually inspect the MCMC
@@ -1857,7 +1857,7 @@ model_full_df <- data.frame(name = c("beta[1]", "beta[2]", "beta[3]", "beta[4]",
                                               ifelse(age == "\u2265 21 yr", paste0(covariate, "_ob"), 
                                                      ifelse(age == "\u2265 16 yr", paste0(covariate, "_o"), NA))))))
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_freeze_up.RData")
+load("data/fit_freeze_up.RData")
 numVars_1 <- 32 ; numVars_2 <- 24
 N <- dim(fit_freeze_up$samples$chain1)[1]
 C <- dim(fit_freeze_up$samples$chain1)[2]
@@ -2105,13 +2105,13 @@ fit_freeze_up_final <-  nimbleMCMC(code = model_freeze_up_final,
                                                              WAIC = TRUE)
 
 save(fit_freeze_up_final,
-     file = "reproductive_senescence_polar_bear_variable_environment/data/fit_freeze_up_final.RData")
+     file = "data/fit_freeze_up_final.RData")
 
 #' 
 #' Let's visually inspect the MCMC
 #' 
 
-load("reproductive_senescence_polar_bear_variable_environment/data/fit_freeze_up_final.RData")
+load("data/fit_freeze_up_final.RData")
 
 # Check convergence with R-hat
 summary <- MCMCvis::MCMCsummary(fit_freeze_up_final$samples)
