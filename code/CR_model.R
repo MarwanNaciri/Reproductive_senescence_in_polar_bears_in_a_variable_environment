@@ -5,12 +5,11 @@
 
 library(jagsUI)
 library(tidyverse)
-load(file = "data/CRlocalbears_revision2MEE.Rdata")
-load(file = "data/agefactlocalbears_revision2MEE.Rdata")
-load(file = "data/agereallocalbears_revision2MEE.Rdata")
-load(file = "data/dataweaning_revision2MEE.Rdata")
-load(file = "data/daylocalbears_revision2MEE.Rdata")
-load(file = "data/initstatelocalbears_revision2MEE.Rdata")
+load(file = "data/CRlocalbears.Rdata") # Matrix of capture histories. See Cubaynes et al. 2021 for meaning of each state
+load(file = "data/agereallocalbears.Rdata")  # Matrix of the age of the bears
+load(file = "data/dataweaning.Rdata")  # Data for the regression of the probability of departure of two year olds against the day of the year
+load(file = "data/daylocalbears.Rdata") # Day of capture of the bears
+load(file = "data/initstatelocalbears.Rdata") # Matrix of initial states
 
 CRfamily <- CRlb # Matrix of capture histories
 daycapt <- daylb # Matrix of days of capture 
